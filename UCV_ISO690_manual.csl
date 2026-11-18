@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<style xmlns="http://purl.org/net/xbiblio/csl" class="in-text" version="1.0" default-locale="es-ES" demote-non-dropping-particle="never" page-range-format="expanded">
+  <info>
+    <title>UCV - ISO 690 y 690-2 (manual 2017: citas autor-año tipo APA, referencias ISO)</title>
+    <title-short>UCV ISO 690 manual</title-short>
+    <id>http://www.example.org/styles/ucv-iso-690-y-690-2-manual</id>
+    <link href="http://www.example.org/styles/ucv-iso-690-y-690-2-manual" rel="self"/>
+    <category citation-format="author-date"/>
+    <category field="generic-base"/>
+    <summary>Citas en el texto (Autor, año, p.) y lista de referencias según el manual "Referencias estilo ISO 690 y 690-2" de la Universidad César Vallejo (Fondo Editorial, 2017).</summary>
+    <updated>2026-11-18T00:00:00+00:00</updated>
+  </info>
+
+  <!-- Términos fijos para que no dependan del idioma elegido en Mendeley Cite -->
+  <locale>
+    <terms>
+      <term name="and">y</term>
+      <term name="et-al">et al.</term>
+      <term name="page" form="short">
+        <single>p.</single>
+        <multiple>pp.</multiple>
+      </term>
+      <term name="edition" form="short">ed.</term>
+    </terms>
+  </locale>
+
+  <!-- ============ CITAS EN EL TEXTO ============ -->
+
+  <!-- Autor en la cita: solo apellidos; 3-5 autores todos la primera vez, luego et al.; 6 o más: primer autor et al. -->
+  <macro name="author-cit">
+    <choose>
+      <if variable="author">
+        <names variable="author">
+          <name form="short" and="text" delimiter=", " delimiter-precedes-last="never" delimiter-precedes-et-al="never" et-al-min="6" et-al-use-first="1" et-al-subsequent-min="3" et-al-subsequent-use-first="1"/>
+          <et-al/>
+        </names>
+      </if>
+      <else-if variable="editor">
+        <names variable="editor">
+          <name form="short" and="text" delimiter=", " delimiter-precedes-last="never" delimiter-precedes-et-al="never" et-al-min="6" et-al-use-first="1" et-al-subsequent-min="3" et-al-subsequent-use-first="1"/>
+          <et-al/>
+        </names>
+      </else-if>
+      <else-if type="legislation bill" match="any">
+        <text variable="title"/>
+      </else-if>
+      <else>
+        <text variable="title" form="short" quotes="true"/>
+      </else>
+    </choose>
+  </macro>
+
+  <macro name="year-cit">
+    <choose>
+      <if variable="issued">
+        <date variable="issued">
+          <date-part name="year"/>
+        </date>
+        <text variable="year-suffix"/>
+      </if>
+      <else>
+        <text value="s. f."/>
+      </else>
+    </choose>
+  </macro>
+
+  <macro name="locator-cit">
+    <group delimiter=" ">
+      <label variable="locator" form="short"/>
+      <text variable="locator"/>
+    </group>
+  </macro>
+
+  <citation disambiguate-add-year-suffix="true">
+    <sort>
+      <key macro="author-cit"/>
+      <key variable="issued"/>
+    </sort>
+    <layout prefix="(" suffix=")" delimiter="; ">
+      <group delimiter=", ">
+        <text macro="author-cit"/>
+        <text macro="year-cit"/>
+        <text macro="locator-cit"/>
+      </group>
+    </layout>
+  </citation>
+
+  <!-- ============ REFERENCIAS ============ -->
+
+  <!-- APELLIDO en mayúsculas, nombre completo; hasta 3 autores unidos con "y"; más de 3: primer autor + et al. (cursiva) -->
+  <macro name="author-bib">
+    <names variable="author">
+      <name name-as-sort-order="all" sort-separator=", " and="text" delimiter=", " delimiter-precedes-last="never" delimiter-precedes-et-al="never" et-al-min="4" et-al-use-first="1">
+        <name-part name="family" text-case="uppercase"/>
+      </name>
+      <et-al font-style="italic"/>
+      <substitute>
+        <names variable="editor"/>
+      </substitute>
+    </names>
+  </macro>
+
+  <!-- Clave de orden: primer autor y luego año en orden cronológico inverso -->
+  <macro name="author-sort">
+    <names variable="author">
+      <name form="long" name-as-sort-order="all" sort-separator=", " et-al-min="1" et-al-use-first="1"/>
+      <substitute>
+        <names variable="editor"/>
+        <text variable="title"/>
+      </substitute>
+    </names>
+  </macro>
+
+  <!-- Fecha en texto: 10 de diciembre de 2025 / diciembre de 2025 / 2025 -->
+  <macro name="fecha-larga">
+    <choose>
+      <if variable="issued">
+        <date variable="issued">
+          <date-part name="day" suffix=" de "/>
+          <date-part name="month" suffix=" de "/>
+          <date-part name="year"/>
+        </date>
+        <text variable="year-suffix"/>
+      </if>
+      <else>
+        <text value="s. f."/>
+      </else>
+    </choose>
+  </macro>
+
+  <macro name="en-linea">
+    <choose>
+      <if variable="URL DOI" match="any">
+        <text value=" [en línea]"/>
+      </if>
+    </choose>
+  </macro>
+
+  <macro name="seg-autor">
+    <choose>
+      <if variable="author editor" match="any">
+        <text macro="author-bib" suffix="."/>
+      </if>
+    </choose>
+  </macro>
+
+  <macro name="seg-consulta">
+    <choose>
+      <if variable="URL DOI" match="any">
+        <group prefix="[Fecha de consulta: " suffix="].">
+          <date variable="accessed">
+            <date-part name="day" suffix=" de "/>
+            <date-part name="month" suffix=" de "/>
+            <date-part name="year"/>
+          </date>
+        </group>
+      </if>
+    </choose>
+  </macro>
+
+  <macro name="seg-disponible">
+    <group delimiter=" ">
+      <choose>
+        <if variable="DOI">
+          <text variable="DOI" prefix="Disponible en: https://doi.org/"/>
+        </if>
+        <else-if variable="URL">
+          <text variable="URL" prefix="Disponible en: "/>
+        </else-if>
+      </choose>
+      <group delimiter=" ">
+        <text value="ISSN:"/>
+        <text variable="ISSN"/>
+      </group>
+      <group delimiter=" ">
+        <text value="ISBN:"/>
+        <text variable="ISBN"/>
+      </group>
+    </group>
+  </macro>
+
+  <macro name="seg-tesis">
+    <text value="Tesis"/>
+    <text variable="genre" prefix=" (" suffix=")"/>
+    <text value="."/>
+  </macro>
+
+  <macro name="seg-edicion">
+    <group delimiter=" ">
+      <number variable="edition" form="ordinal"/>
+      <text term="edition" form="short"/>
+    </group>
+  </macro>
+
+  <macro name="seg-lugar-editorial-fecha">
+    <group delimiter=", " suffix=".">
+      <group delimiter=": ">
+        <text variable="publisher-place"/>
+        <text variable="publisher"/>
+      </group>
+      <text macro="fecha-larga"/>
+    </group>
+  </macro>
+
+  <macro name="seg-paginas-libro">
+    <group delimiter=" " suffix=".">
+      <text variable="number-of-pages"/>
+      <text value="pp."/>
+    </group>
+  </macro>
+
+  <macro name="seg-paginas">
+    <group delimiter=" " suffix=".">
+      <label variable="page" form="short"/>
+      <text variable="page"/>
+    </group>
+  </macro>
+
+  <bibliography entry-spacing="1" hanging-indent="false">
+    <sort>
+      <key macro="author-sort"/>
+      <key variable="issued" sort="descending"/>
+    </sort>
+    <layout suffix="">
+      <choose>
+
+        <!-- Artículo de revista / periódico: AUTOR. Título. Revista [en línea]. fecha, vol., n.°, pp. [Fecha de consulta]. Disponible en: ... ISSN: -->
+        <if type="article-journal article-magazine article-newspaper" match="any">
+          <group delimiter=" ">
+            <text macro="seg-autor"/>
+            <text variable="title" suffix="."/>
+            <group suffix=".">
+              <text variable="container-title" font-style="italic"/>
+              <text macro="en-linea"/>
+            </group>
+            <group delimiter=", " suffix=".">
+              <text macro="fecha-larga"/>
+              <group delimiter=" ">
+                <text value="vol."/>
+                <text variable="volume"/>
+              </group>
+              <group delimiter=" ">
+                <text value="n.°"/>
+                <text variable="issue"/>
+              </group>
+              <group delimiter=" ">
+                <label variable="page" form="short"/>
+                <text variable="page"/>
+              </group>
+            </group>
+            <text macro="seg-consulta"/>
+            <text macro="seg-disponible"/>
+          </group>
+        </if>
+
+        <!-- Tesis: AUTOR. Título. Tesis (grado). Lugar: Universidad, Facultad, año. pp. [Fecha de consulta]. Disponible en: ... -->
+        <else-if type="thesis">
+          <group delimiter=" ">
+            <text macro="seg-autor"/>
+            <text variable="title" suffix="."/>
+            <text macro="seg-tesis"/>
+            <text macro="seg-lugar-editorial-fecha"/>
+            <text macro="seg-paginas-libro"/>
+            <text macro="seg-consulta"/>
+            <text macro="seg-disponible"/>
+          </group>
+        </else-if>
+
+        <!-- Ley: Ley n.° 29783, Denominación. Diario oficial El Peruano, Lima, Perú, 20 de agosto de 2011. -->
+        <else-if type="legislation bill" match="any">
+          <group delimiter=" ">
+            <text variable="title" suffix="."/>
+            <group delimiter=", " suffix=".">
+              <text variable="container-title"/>
+              <text variable="publisher"/>
+              <text variable="publisher-place"/>
+              <text macro="fecha-larga"/>
+            </group>
+            <text macro="seg-consulta"/>
+            <text macro="seg-disponible"/>
+          </group>
+        </else-if>
+
+        <!-- Capítulo de libro: AUTOR. Título. En: AUTOR del libro. Título del libro. Lugar: Editorial, año. pp. ISBN: -->
+        <else-if type="chapter paper-conference" match="any">
+          <group delimiter=" ">
+            <text macro="seg-autor"/>
+            <text variable="title" suffix="."/>
+            <group delimiter=" " suffix=".">
+              <text value="En:" font-style="italic"/>
+              <names variable="editor">
+                <name name-as-sort-order="all" sort-separator=", " and="text" delimiter=", " delimiter-precedes-last="never" delimiter-precedes-et-al="never" et-al-min="4" et-al-use-first="1">
+                  <name-part name="family" text-case="uppercase"/>
+                </name>
+                <et-al font-style="italic"/>
+              </names>
+            </group>
+            <group suffix=".">
+              <text variable="container-title"/>
+              <text macro="en-linea"/>
+            </group>
+            <text macro="seg-edicion"/>
+            <text macro="seg-lugar-editorial-fecha"/>
+            <text macro="seg-paginas"/>
+            <text macro="seg-consulta"/>
+            <text macro="seg-disponible"/>
+          </group>
+        </else-if>
+
+        <!-- Libro, informe, página web y demás: AUTOR. Título [en línea]. ed. Sitio. Lugar: Editorial, fecha. pp. [Fecha de consulta]. Disponible en: ... -->
+        <else>
+          <group delimiter=" ">
+            <text macro="seg-autor"/>
+            <group suffix=".">
+              <text variable="title"/>
+              <text macro="en-linea"/>
+            </group>
+            <text macro="seg-edicion"/>
+            <text variable="container-title" suffix="."/>
+            <text macro="seg-lugar-editorial-fecha"/>
+            <text macro="seg-paginas-libro"/>
+            <text macro="seg-consulta"/>
+            <text macro="seg-disponible"/>
+          </group>
+        </else>
+
+      </choose>
+    </layout>
+  </bibliography>
+</style>
